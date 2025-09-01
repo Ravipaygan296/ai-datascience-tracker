@@ -2,8 +2,9 @@ name: AI Contribution Tracker
 
 on:
   schedule:
-    - cron: "0 9 * * *"   # Runs daily at 09:00 UTC
-  workflow_dispatch:       # Allow manual trigger
+    - cron: "0 5/3 * * *"   # Start at 10:30 AM IST, repeat every 3 hours
+  workflow_dispatch:        # Allow manual run anytime
+       
 
 jobs:
   build:
