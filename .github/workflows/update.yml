@@ -2,8 +2,9 @@ name: Auto Update AI Tracker
 
 on:
   schedule:
-    - cron: "0 */3 * * *"    # every 3 hours (UTC)
-  workflow_dispatch:
+    - cron: "0 5/3 * * *"   # Start at 10:30 AM IST, repeat every 3 hours
+  workflow_dispatch:        # Allow manual run anytime
+
 
 jobs:
   update:
