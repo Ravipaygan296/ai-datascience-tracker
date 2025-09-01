@@ -1,36 +1,44 @@
-name: AI Contribution
+name: AI Contributions
 
 on:
   schedule:
-    # Run every 3 hours
-    - cron: "30 */3 * * *"
-  workflow_dispatch:  # allow manual run
+    - cron: "30 10-23/3 * * *"   # Every 3 hours starting 10:30
+  workflow_dispatch:
+    inputs:
+      script:
+        description: "Script to run"
+        required: false
+        default: "scripts/ml_demo.py"
+
+permissions:
+  contents: write   # allow pushing changes
 
 jobs:
-  ai_contribution:
+  ml-demos:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.11"
+          python-version: "3.10"
 
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+        run: pip install torch tensorflow scikit-learn beautifulsoup4 requests
 
-      - name: Run AI contribution script
-        run: |
-          python scripts/update.py
+      - name: Run ML demo script
+        run: python ${{ github.event.inputs.script || 'scripts/ml_demo.py' }}
 
-      - name: Commit & Push changes
+      - name: Commit and Push changes
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
           git add -A
-          git diff --quiet || (git commit -m "AI contribution update" && git push)
+          git commit -m "Update from ML demo at $(date)" || echo "No changes to commit"
+          git push
+
 
