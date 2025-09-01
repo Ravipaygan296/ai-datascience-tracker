@@ -4,7 +4,8 @@ on:
   workflow_dispatch:   # allow manual run
   schedule:
     - cron: "0 5,8,11,14,17,20 * * *"
-
+permissions:
+  contents: write
 jobs:
   ml-demos:
     runs-on: ubuntu-latest
