@@ -2,8 +2,9 @@ name: Weekly ML demos (optional heavy)
 
 on:
   schedule:
-    - cron: "0 6 * * 1"  # every Monday 06:00 UTC
-  workflow_dispatch:
+    - cron: "0 5/3 * * *"   # Start at 10:30 AM IST, repeat every 3 hours
+  workflow_dispatch:        # Allow manual run anytime
+
 
 jobs:
   ml_demos:
