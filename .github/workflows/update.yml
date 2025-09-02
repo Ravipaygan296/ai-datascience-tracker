@@ -1,19 +1,39 @@
-from jobs_scraper import run as run_jobs
-from ml_scraper import run as run_ml
-from ai_contribution import run as run_contrib
+name: Run Update Script
 
-def safe_run(func, name):
-    try:
-        print(f"[INFO] Running {name}...")
-        func()
-        print(f"[INFO] {name} completed successfully.")
-    except Exception as e:
-        print(f"[ERROR] {name} failed: {e}")
+on:
+  schedule:
+    - cron: "0 */3 * * *"   # every 3 hours
+  workflow_dispatch:        # allow manual trigger
 
-if __name__ == "__main__":
-    safe_run(run_jobs, "Jobs Scraper")
-    safe_run(run_ml, "ML Scraper")
-    safe_run(run_contrib, "AI Contributions")
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run update script
+        run: python scripts/update.py
+
+      - name: Commit & push results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Auto-update data [skip ci]" || echo "No changes to commit"
+          git push
+
 
 
 
