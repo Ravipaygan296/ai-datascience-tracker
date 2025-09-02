@@ -1,6 +1,9 @@
-# Runs everything; safe & idempotent
-import os, sys
+# update.py
+# Runs everything; safe & idempotent with structured logging
+
+import os, sys, traceback
 from pathlib import Path
+from datetime import datetime
 
 # Ensure scripts dir is importable
 THIS_DIR = Path(__file__).parent.resolve()
@@ -16,41 +19,34 @@ from sklearn_demo import run as run_sklearn
 from tensorflow_demo import run as run_tf
 from pytorch_demo import run as run_torch
 
+TASKS = {
+    "fetch_papers": run_papers,
+    "kaggle_trends": run_kaggle,
+    "github_trends": run_gh,
+    "jobs_scraper": run_jobs,
+    "hf_models": run_hf,
+    "sklearn_demo": run_sklearn,
+    "tensorflow_demo": run_tf,
+    "pytorch_demo": run_torch,
+}
+
 def main():
     Path("data").mkdir(exist_ok=True)
-    try:
-        run_papers()
-    except Exception as e:
-        print("fetch_papers error:", e)
-    try:
-        run_kaggle()
-    except Exception as e:
-        print("kaggle_trends error:", e)
-    try:
-        run_gh()
-    except Exception as e:
-        print("github_trends error:", e)
-    try:
-        run_jobs()
-    except Exception as e:
-        print("jobs_scraper error:", e)
-    try:
-        run_hf()
-    except Exception as e:
-        print("hf_models error:", e)
-    try:
-        run_sklearn()
-    except Exception as e:
-        print("sklearn_demo error:", e)
-    # Optional heavy demos — they gracefully skip if library missing
-    try:
-        run_tf()
-    except Exception as e:
-        print("tensorflow_demo error:", e)
-    try:
-        run_torch()
-    except Exception as e:
-        print("pytorch_demo error:", e)
+
+    print(f"\n=== Update run started: {datetime.utcnow().isoformat()} UTC ===\n")
+
+    for name, func in TASKS.items():
+        print(f"▶ Running {name} ...")
+        try:
+            func()
+            print(f"✔ {name} completed.\n")
+        except Exception as e:
+            print(f"✘ {name} failed: {e}")
+            traceback.print_exc()
+            print()
+
+    print(f"=== Update run finished: {datetime.utcnow().isoformat()} UTC ===\n")
 
 if __name__ == "__main__":
     main()
+
