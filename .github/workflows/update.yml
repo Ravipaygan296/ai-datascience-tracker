@@ -1,40 +1,20 @@
-name: Update Data
+from jobs_scraper import run as run_jobs
+from ml_scraper import run as run_ml
+from ai_contribution import run as run_contrib
 
-on:
-  workflow_dispatch:   # allow manual run
-  schedule:
-    # Start at 10:30 AM IST every day, then every 3 hours
-    - cron: "0 5,8,11,14,17,20 * * *"
-permissions:
-  contents: write
-jobs:
-  update:
-    runs-on: ubuntu-latest
+def safe_run(func, name):
+    try:
+        print(f"[INFO] Running {name}...")
+        func()
+        print(f"[INFO] {name} completed successfully.")
+    except Exception as e:
+        print(f"[ERROR] {name} failed: {e}")
 
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+if __name__ == "__main__":
+    safe_run(run_jobs, "Jobs Scraper")
+    safe_run(run_ml, "ML Scraper")
+    safe_run(run_contrib, "AI Contributions")
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.10"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Run update script
-        run: python scripts/update.py
-
-      - name: Commit changes
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-          git add -A
-          git commit -m "Auto update data" || echo "No changes to commit"
-          git push
 
 
 
