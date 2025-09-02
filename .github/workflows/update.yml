@@ -1,16 +1,16 @@
-name: Run Update Script
+name: Auto Update (Every 3 Hours)
 
 on:
   schedule:
-    - cron: "0 */3 * * *"   # every 3 hours
-  workflow_dispatch:        # allow manual trigger
+    # Runs every 3 hours
+    - cron: "0 */3 * * *"
+  workflow_dispatch: # Allow manual trigger
 
 jobs:
   update:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v3
 
       - name: Set up Python
@@ -20,19 +20,20 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install --upgrade pip
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run update script
-        run: python scripts/update.py
+      - name: Run update.py
+        run: python update.py
 
-      - name: Commit & push results
+      - name: Commit & Push changes
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "Auto-update data [skip ci]" || echo "No changes to commit"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add .
+          git commit -m "Auto update (every 3 hours)" || echo "No changes to commit"
           git push
+
 
 
 
