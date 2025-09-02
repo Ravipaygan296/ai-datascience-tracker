@@ -14,7 +14,6 @@ from fetch_papers import run as run_papers
 from kaggle_trends import run as run_kaggle
 from github_trends import run as run_gh
 from jobs_scraper import run as run_jobs
-from hf_models import run as run_hf
 from sklearn_demo import run as run_sklearn
 from tensorflow_demo import run as run_tf
 from pytorch_demo import run as run_torch
@@ -24,7 +23,6 @@ TASKS = {
     "kaggle_trends": run_kaggle,
     "github_trends": run_gh,
     "jobs_scraper": run_jobs,
-    "hf_models": run_hf,
     "sklearn_demo": run_sklearn,
     "tensorflow_demo": run_tf,
     "pytorch_demo": run_torch,
